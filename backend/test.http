@@ -1,0 +1,23 @@
+POST http://localhost:3000/user/signup 
+content-type: application/json
+
+{
+    "email": "hgebrekidan@miu.edu",
+    "password" : "12345",
+    "phone": "+1234567890",
+    "location": {
+        "zipcode": "52557",
+        "city": "Fairfield",
+        "state" : "IA"
+    }
+}
+POST http://localhost:3000/user/signup
+content-type: application/json
+{
+    "email": "hgebrekidan@miu.edu",
+    "password": "12345",
+    "city": "Fairfield",
+    "state": "IA"
+}
+GET http://localhost:3000/user/logs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhnZWJyZWtpZGFuQG1pdS5lZHUiLCJwaG9uZSI6IisxMjM0NTY3ODkwIiwiaWF0IjoxNjM3MzkxNDIxfQ.5UTxylQOwXyaLc-V8yWmpdJXMxibl3zheplE5BU2ucc
