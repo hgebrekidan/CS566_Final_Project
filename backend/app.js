@@ -5,7 +5,10 @@ const userRoutes = require('./routes/User');
 const farmerRoutes = require('./routes/Farmer');
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/test');
+mongoose.connect('mongodb://localhost:27017/test', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
 
 app.use(cors());
 app.use(express.json());
