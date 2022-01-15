@@ -2,18 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/User');
-const farmerRoutes = require('./routes/Farmer');
+const doctorRoutes = require('./routes/Doctor')
+const appointmentRoutes = require('./routes/Appointment');
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/test', {
+mongoose.connect('mongodb://127.0.0.1:27017/test', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
 
 app.use(cors());
 app.use(express.json());
+app.use('/doctor', doctorRoutes)
 app.use('/user', userRoutes);
-app.use('/farmer', farmerRoutes);
+app.use('/farmer', appointmentRoutes);
 
 app.use((err, req, res, next)=>{
     res.status(400).json({ error: err})
