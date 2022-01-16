@@ -6,7 +6,7 @@ const Doctor = mongoose.model('Doctor',{
     email: {type: String, required: true},
     password: {type: String, required: true},
     phone: {type: String, required: true},
-    appointment: [
+    appointments: [
         {
         user: { type: Schema.Types.ObjectId,
         ref: 'User', required: false},

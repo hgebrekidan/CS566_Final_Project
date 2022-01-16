@@ -61,7 +61,7 @@ router.post('/login', async (req, res, next) => {
 //     }
 // })
 // admin user can list out all other users
-router.get('/patients',auth, async (req, res, next)=>{
+router.get('/users',auth, async (req, res, next)=>{
     try {
         const user = await User.findOne({email: req.token.email});
         console.log(user)
@@ -69,7 +69,7 @@ router.get('/patients',auth, async (req, res, next)=>{
             const users = await User.find({_id: {$nin: [user._id]}}).select({password: 0});
             res.json({success: 1, data: users})
         }
-        res.json('User does not have permission')
+        res.json({error: 'User does not have permission'})
     } catch (err) {
         next(err)
     }
