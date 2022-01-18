@@ -12,16 +12,17 @@ const router = express.Router();
 router.post('/signup', async (req, res, next) => {
     // input req.body
     try {
-        const {fullName, email, password, phone, role} = req.body
-        if(!fullName || !email || !password || !phone || !role ){
+        
+        const {firstName, lastName, gender, birthDate, email, password, phone, address, city, state, zipCode } = req.body
+        if(!firstName || !email || !lastName || !gender || !birthDate || !password || !phone || !address || !city || !state || !zipCode ){
             res.json('Fill out the blank spaces please');
         }
         
         const exists = await User.findOne({ email: req.body.email });
-
-        if (exists) throw new Error('User already Exists')
+        console.log("exists "+exists)
+        if (exists) res.json('User already Exists')
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const user = new User({ ...req.body, password: hashedPassword });// assuming the input will have all the attributes of User Object with the hashed password
+        const user = new User({ ...req.body, password: hashedPassword , role: 'patient'});// assuming the input will have all the attributes of User Object with the hashed password
         await user.save();
         res.json({ success: 1 });
     } catch (err) {
@@ -39,9 +40,16 @@ router.post('/login', async (req, res, next) => {
         if (!match) throw new Error("Invalid Passowrd");
 
         const token = jwt.sign({
-            fullName: user.fullName,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            gender: user.gender,
+            birthDate: user.birthDate,
             email: user.email,
             phone: user.phone,
+            address: user.address,
+            city: user.city,
+            state: user.state,
+            zipCode: user.zipCode,
             role: user.role
         }, config.secret)
 
@@ -51,15 +59,7 @@ router.post('/login', async (req, res, next) => {
         next(err);
     }
 })
-// router.get('/logs', auth, async (req, res, next) => {
-//     try{
-//         const user = await User.findOne({ email: req.token.email})
-//         .select({ logs: {$slice: -5}, email: 0, phone: 0, location: 0, password: 0});
-//         res.json({logs: user.logs})
-//     }catch(err){
-//         next(err)
-//     }
-// })
+
 // admin user can list out all other users
 router.get('/users',auth, async (req, res, next)=>{
     try {
@@ -70,6 +70,34 @@ router.get('/users',auth, async (req, res, next)=>{
             res.json({success: 1, data: users})
         }
         res.json({error: 'User does not have permission'})
+    } catch (err) {
+        next(err)
+    }
+})
+// admin can search the specific user using id
+router.get('/users/:id',auth, async (req, res, next)=>{
+    try {
+        const user = await User.findOne({email: req.token.email});
+        console.log(user)
+        if(user.role === 'admin'){
+            const user = await User.find({_id: new Object(req.params.id)});
+            res.json({success: 1, data: user})
+        }
+        res.json({error: 'User does not exist'})
+    } catch (err) {
+        next(err)
+    }
+})
+// admin can search the specific user using email
+router.get('/users/:email',auth, async (req, res, next)=>{
+    try {
+        const user = await User.findOne({email: req.token.email});
+        console.log(user)
+        if(user.role === 'admin'){
+            const user = await User.find({email: req.params.email});
+            res.json({success: 1, data: user})
+        }
+        res.json({error: 'User does not exist'})
     } catch (err) {
         next(err)
     }
@@ -92,6 +120,42 @@ router.post('/users',auth, async (req, res, next)=>{
             }else{res.json("This user already has an account!")
                 
             }
+        
+    } catch (err) {
+        next(err)
+    }
+
+})
+// admin can delete another user by id
+router.delete('/users/:id',auth, async (req, res, next)=>{
+    try {
+        const adminUser = await User.findOne({email: req.token.email});
+        console.log(adminUser)
+        if(adminUser.role === 'admin'){
+            const user = await User.deleteOne({_id: new Object(req.params.id)});
+            if(user.deletedCount === 0) res.json({errMsg: 'User does not exist'})
+            res.json({success: 1, data: user})
+        }
+        
+    } catch (err) {
+        next(err)
+    }
+})
+router.patch('/users/:id',auth, async (req, res, next)=>{
+    try {
+        const adminUser = await User.findOne({email: req.token.email});
+        console.log(adminUser)
+        if(adminUser.role === 'admin'){
+            const user = await User.updateOne({_id: new Object(req.params.id)},
+            {
+                $set: { firstName: req.body.firstName, lastName: req.body.lastName,
+             gender: req.body.gender, birthDate: req.body.birthDate, email: req.body.email, password: req.body.password, 
+            phone: req.body.phone, address: req.body.address, city: req.body.city, state: req.body.state, zipCode: req.body.zipCode }
+            });
+            const updatedUser = await User.findOne({_id: new Object(req.params.id)}).select({_id: 0})
+            // if(user.matchedCount === 1) res.json({error: 'User does not exist'})
+            res.json({success: 1, data: updatedUser})
+        }
         
     } catch (err) {
         next(err)

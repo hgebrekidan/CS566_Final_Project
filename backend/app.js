@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const userRoutes = require('./routes/User');
 const doctorRoutes = require('./routes/Doctor')
 const appointmentRoutes = require('./routes/Appointment');
+const auth = require('./middleware/auth');
 const app = express();
 
 mongoose.connect('mongodb://127.0.0.1:27017/test', {
@@ -13,9 +14,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/test', {
 
 app.use(cors());
 app.use(express.json());
-app.use('/doctor', doctorRoutes)
+// app.use('/doctor', doctorRoutes)
 app.use('/user', userRoutes);
-app.use('/farmer', appointmentRoutes);
+app.use('/schedule', appointmentRoutes);
 
 app.use((err, req, res, next)=>{
     res.status(400).json({ error: err})
