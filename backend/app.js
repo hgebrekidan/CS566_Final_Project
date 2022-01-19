@@ -15,8 +15,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/test', {
 app.use(cors());
 app.use(express.json());
 // app.use('/doctor', doctorRoutes)
-app.use('/user', userRoutes);
-app.use('/schedule', appointmentRoutes);
+app.use('/users', userRoutes);
+app.use('/schedules',auth, appointmentRoutes);
 
 app.use((err, req, res, next)=>{
     res.status(400).json({ error: err})

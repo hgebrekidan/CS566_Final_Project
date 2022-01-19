@@ -24,7 +24,7 @@ router.post('/signup', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = new User({ ...req.body, password: hashedPassword , role: 'patient'});// assuming the input will have all the attributes of User Object with the hashed password
         await user.save();
-        res.json({ success: 1 });
+        res.json({ success: 1 , data: user});
     } catch (err) {
         next(err);
     }
@@ -32,11 +32,16 @@ router.post('/signup', async (req, res, next) => {
     // log
 })
 router.post('/login', async (req, res, next) => {
+    console.log(req.body)
     try {
         
         // console.log(req.body);
         const user = await User.findOne({ email: req.body.email } )
+        console.log(user);
+        // console.log("1234 bbbbbbbbb" )
         const match = await bcrypt.compare(req.body.password, user.password);
+        console.log(match);
+        // console.log("1234567ccccc")
         if (!match) throw new Error("Invalid Passowrd");
 
         const token = jwt.sign({
@@ -53,8 +58,8 @@ router.post('/login', async (req, res, next) => {
             role: user.role
         }, config.secret)
 
-
-        res.json({ success: 1,data: token });
+// console.log(token);
+        res.json({ success: 1,token: token });
     } catch (err) {
         next(err);
     }

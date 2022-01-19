@@ -27,19 +27,19 @@ router.get('/appointments/:id', async (req, res, next) => {
 // add new appointment
 router.post('/appointments', async (req, res, next) => {
     try {
-        const {appointmentDate, firstName,lastName, email} = req.body;
-        if (!appointmentDate || !firstName || !lastName || !email) {
+        const {appointmentDate, appointmentTime, firstName,lastName, email} = req.body;
+        if (!appointmentDate || !appointmentTime || !firstName || !lastName || !email) {
     return res.status(400).json({
       message: 'Appointment Date, Name and email are required',
     });
   }
   const existedSchedule = await Appointment.findOne({email: email});
   console.log(existedSchedule)
-  if(existedSchedule){
+  if(existedSchedule.email === email && existedSchedule.appointmentDate === appointmentDate && existedSchedule.appointmentTime === appointmentTime){
     res.json("Appointment already exists")
     
   }
-  const payload = { appointmentDate, firstName, lastName, email };
+  const payload = { appointmentDate, appointmentTime, firstName, lastName, email };
     const appointment = new Appointment(payload);
     const appoint = await appointment.save()
     res.json({success: 1, schedule:appoint})
@@ -70,7 +70,7 @@ router.patch('/appointments/:id', async (req, res, next)=>{
       
             const appointment = await Appointment.updateOne({_id: new Object(req.params.id)},
             {
-                $set: { appointmentDate: req.body.appointmentDate, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email }
+                $set: { appointmentDate: req.body.appointmentDate, appointmentTime: req.body.appointmentTime, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email }
             });
             const updatedAppointment = await Appointment.findOne({_id: new Object(req.params.id)}).select({_id: 0})
             // if(user.matchedCount === 1) res.json({error: 'User does not exist'})
