@@ -7,8 +7,8 @@ const Appointment = require('../models/Appointment')
 router.get('/appointments', async (req, res, next) => {
     try {
         const appointment = await Appointment.find({})
-        if(!appointment) res.json('Appointment does not exist!')
-        res.json({success: 1, data: appointment})
+        if(!appointment) return res.json('Appointment does not exist!')
+       return res.json({success: 1, data: appointment})
     } catch (error) {
         next(error)
     }
@@ -19,7 +19,7 @@ router.get('/appointments/:id', async (req, res, next) => {
         const appointment = await Appointment.findOne({ _id: new Object(req.params.id) })
         .select({_id: 0})
         // const specificAppointment = await Appointment.findOne({_id: appointment._id})
-        res.json({success: 1, data: appointment})
+       return res.json({success: 1, data: appointment})
     } catch (error) {
         next(error)
     }
@@ -33,16 +33,19 @@ router.post('/appointments', async (req, res, next) => {
       message: 'Appointment Date, Name and email are required',
     });
   }
-  const existedSchedule = await Appointment.findOne({email: email});
-  console.log(existedSchedule)
-  if(existedSchedule.email === email && existedSchedule.appointmentDate === appointmentDate && existedSchedule.appointmentTime === appointmentTime){
-    res.json("Appointment already exists")
+  const existedSchedule = await Appointment.findOne({email: email,appointmentDate });
+//   console.log(existedSchedule)
+//   if(existedSchedule.email === email && existedSchedule.appointmentDate === appointmentDate && existedSchedule.appointmentTime === appointmentTime){
+if(existedSchedule){   
+return res.json("Appointment already exists")
     
-  }
-  const payload = { appointmentDate, appointmentTime, firstName, lastName, email };
+  }else{
+    const payload = { appointmentDate, appointmentTime, firstName, lastName, email };
     const appointment = new Appointment(payload);
     const appoint = await appointment.save()
-    res.json({success: 1, schedule:appoint})
+    //console.log("???????????????????? :",appoint)
+   return res.json({success: 1, appointmentData:appoint})
+  }
     } catch (error) {
         next(error)
     }
@@ -53,7 +56,6 @@ router.post('/appointments', async (req, res, next) => {
 // delete/cancel an appointment by id
 router.delete('/appointments/:id', async (req, res, next) => {
     try {
-        
   const deletedAppointment = await Appointment.deleteOne({ _id: new Object(req.params.id) })
   console.log(deletedAppointment)
   if(!deletedAppointment.deletedCount) res.json('Appointment does not exist!')

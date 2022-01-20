@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
-const { timing } = require('npmlog');
 
 const Appointment = mongoose.model('Appointment',{
-    appointmentDate: Date,
-    appointmentTime: String,
+    
     firstName: String,
     lastName: String,
-    phone: String
+    email: String,
+    appointmentDate: String,
+    appointmentTime: String,
 });
 module.exports = Appointment;

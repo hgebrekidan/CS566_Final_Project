@@ -15,16 +15,16 @@ router.post('/signup', async (req, res, next) => {
         
         const {firstName, lastName, gender, birthDate, email, password, phone, address, city, state, zipCode } = req.body
         if(!firstName || !email || !lastName || !gender || !birthDate || !password || !phone || !address || !city || !state || !zipCode ){
-            res.json('Fill out the blank spaces please');
+           return res.json('Fill out the blank spaces please');
         }
         
         const exists = await User.findOne({ email: req.body.email });
         console.log("exists "+exists)
-        if (exists) res.json('User already Exists')
+        if (exists) return res.json('User already Exists')
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = new User({ ...req.body, password: hashedPassword , role: 'patient'});// assuming the input will have all the attributes of User Object with the hashed password
         await user.save();
-        res.json({ success: 1 , data: user});
+        return res.json({ success: 1 , data: user});
     } catch (err) {
         next(err);
     }
@@ -57,10 +57,15 @@ router.post('/login', async (req, res, next) => {
             zipCode: user.zipCode,
             role: user.role
         }, config.secret)
-
+        const userData = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+        }
 // console.log(token);
-        res.json({ success: 1,token: token });
+       return res.json({ success: 1,token: token, userData: userData});
     } catch (err) {
+        console.log("12345yyyyyyyyyyyyyyy")
         next(err);
     }
 })
@@ -72,9 +77,9 @@ router.get('/users',auth, async (req, res, next)=>{
         console.log(user)
         if(user.role === 'admin'){
             const users = await User.find({_id: {$nin: [user._id]}}).select({password: 0});
-            res.json({success: 1, data: users})
+           return res.json({success: 1, data: users})
         }
-        res.json({error: 'User does not have permission'})
+       return res.json({error: 'User does not have permission'})
     } catch (err) {
         next(err)
     }
@@ -86,9 +91,9 @@ router.get('/users/:id',auth, async (req, res, next)=>{
         console.log(user)
         if(user.role === 'admin'){
             const user = await User.find({_id: new Object(req.params.id)});
-            res.json({success: 1, data: user})
+            return res.json({success: 1, data: user})
         }
-        res.json({error: 'User does not exist'})
+        return res.json({error: 'User does not exist'})
     } catch (err) {
         next(err)
     }
@@ -100,9 +105,9 @@ router.get('/users/:email',auth, async (req, res, next)=>{
         console.log(user)
         if(user.role === 'admin'){
             const user = await User.find({email: req.params.email});
-            res.json({success: 1, data: user})
+           return res.json({success: 1, data: user})
         }
-        res.json({error: 'User does not exist'})
+        return res.json({error: 'User does not exist'})
     } catch (err) {
         next(err)
     }
@@ -112,7 +117,7 @@ router.post('/users',auth, async (req, res, next)=>{
     try {
         const user = await User.findOne({email: req.token.email});
         
-        if(user.role==='patient') res.json('Does not have access to do the operation!') 
+        if(user.role==='patient') return res.json('Does not have access to do the operation!') 
 
             const password = await bcrypt.hash(req.body.password, 10);
             const newUser = new User({fullName:req.body.fullName, email:req.body.email,password:password,
@@ -121,7 +126,7 @@ router.post('/users',auth, async (req, res, next)=>{
             if(!exists) {
                 
             await newUser.save()
-            res.json("new user successfully added!")
+            return res.json("new user successfully added!")
             }else{res.json("This user already has an account!")
                 
             }
@@ -138,8 +143,8 @@ router.delete('/users/:id',auth, async (req, res, next)=>{
         console.log(adminUser)
         if(adminUser.role === 'admin'){
             const user = await User.deleteOne({_id: new Object(req.params.id)});
-            if(user.deletedCount === 0) res.json({errMsg: 'User does not exist'})
-            res.json({success: 1, data: user})
+            if(user.deletedCount === 0) return res.json({errMsg: 'User does not exist'})
+           return res.json({success: 1, data: user})
         }
         
     } catch (err) {
@@ -159,7 +164,7 @@ router.patch('/users/:id',auth, async (req, res, next)=>{
             });
             const updatedUser = await User.findOne({_id: new Object(req.params.id)}).select({_id: 0})
             // if(user.matchedCount === 1) res.json({error: 'User does not exist'})
-            res.json({success: 1, data: updatedUser})
+           return res.json({success: 1, data: updatedUser})
         }
         
     } catch (err) {

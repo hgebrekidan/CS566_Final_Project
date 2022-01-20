@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 // app.use('/doctor', doctorRoutes)
 app.use('/users', userRoutes);
-app.use('/schedules',auth, appointmentRoutes);
+app.use('/schedules', appointmentRoutes);
 
 app.use((err, req, res, next)=>{
     res.status(400).json({ error: err})
