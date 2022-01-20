@@ -13,16 +13,18 @@ import { DeleteServiceComponent } from './deleteSchedule';
 
 import { ServiceList } from './list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FilterPipe } from '../pipes/filter.pipe';
+import { FilterPipe } from './filter.pipe';
+
 
 @NgModule({
   declarations: [
     ServiceList,
     AddServiceComponent,
+    FilterPipe,
 
   ],
   imports: [
-    
+
     FormsModule,
     CommonModule,
     ReactiveFormsModule,

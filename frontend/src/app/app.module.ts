@@ -14,7 +14,7 @@ import { UpdateServiceComponent } from './ScheduleModule/updateSchedule';
 import { HomeComponent } from './user/home.component';
 import { LoginComponent } from './user/login.component';
 import { SignupComponent } from './user/signup.component';
-import { FilterPipe } from './pipes/filter.pipe';
+
 
 
 
@@ -28,8 +28,7 @@ import { FilterPipe } from './pipes/filter.pipe';
     UpdateServiceComponent,
     HomeComponent,
     LoginComponent,
-    SignupComponent,
-    FilterPipe,
+    SignupComponent
   ],
   imports: [
     FormsModule,
@@ -50,7 +49,7 @@ import { FilterPipe } from './pipes/filter.pipe';
       },
     ]),
   ],
-  exports:[RouterModule, FilterPipe],
+  exports:[RouterModule],
   providers: [],
   bootstrap: [AppComponent]
 })

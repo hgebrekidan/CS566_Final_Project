@@ -13,9 +13,10 @@ import { LogService } from '../userService/user.service';
 
   <!-- <button mat-raised-button [routerLink]="['/','home']">Home</button> -->
 <div>
-  <input style="margin: 4px 2px;" :  name = "search" type="text" [(ngModel)]="searchText" placeholder="Search Appointment"/>
+  <!-- <input style="margin: 4px 2px;"  name = "search" type="text" [(ngModel)]="searchText" placeholder="Search Appointment"/> -->
+  <input style="margin: 4px 2px;" #search name="search" type="text" placeholder="Search Appointment"/>
   <!-- {{searchText}} -->
-  <button class="btn">Search</button><br/>
+  <button class="btn" (click)="onClick(search.value)" >Search</button><br/>
   <table>
   <tr>
 
@@ -25,8 +26,8 @@ import { LogService } from '../userService/user.service';
       <th> Appointment Time</th>
 
   </tr>
-  <!-- | filter: searchText: 'firstName' -->
-<tr *ngFor="let item of appointments ">
+
+<tr *ngFor="let item of appointments | filter: search.value">
 
       <td> {{item?.firstName}}</td>
       <td> {{item?.lastName}}</td>
@@ -108,7 +109,7 @@ export class ServiceList implements OnInit {
   form!: FormGroup;
   userData: any;
   isExist:boolean=false
-  searchText?: string;
+  searchText!: string;
   constructor(private Lists: LogService,private router:Router,private fb:FormBuilder,private data:LogService) {
     this.useInfo = localStorage.getItem('userData');
     this.useInfo = JSON.parse(this.useInfo);
@@ -119,6 +120,9 @@ export class ServiceList implements OnInit {
    console.log(this.appointments)
   //  console.log(localStorage.getItem('token'))
   })
+  }
+  onClick(event:any){
+    console.log(event);
   }
   ngOnInit(): void {
     this.form = this.fb.group({
