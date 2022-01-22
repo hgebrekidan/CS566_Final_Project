@@ -60,7 +60,8 @@ router.post('/login', async (req, res, next) => {
         const userData = {
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
+            email: user.email,
+            role: user.role
         }
 // console.log(token);
        return res.json({ success: 1,token: token, userData: userData});

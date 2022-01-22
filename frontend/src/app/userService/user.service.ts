@@ -24,6 +24,9 @@ export class LogService {
     return this.client.patch(`${HTTP_REQUEST}/serviceProviders`,{
     })
   }
+  sendSNS(obj:any){
+    return this.client.post("https://65hh3wg46h.execute-api.us-east-1.amazonaws.com/v1/contact",obj)
+  }
   deleteAppointments(id:any){
    // console.log(id+"+++++++++++")
     return this.client.delete(`${HTTP_REQUEST}/schedules/appointments/${id}`)

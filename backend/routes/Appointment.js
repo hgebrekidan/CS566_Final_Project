@@ -25,6 +25,31 @@ router.get('/appointments/:id', async (req, res, next) => {
     }
 });
 // add new appointment
+router.post('https://65hh3wg46h.execute-api.us-east-1.amazonaws.com/v1/contact',async(req, res, next)=>{
+    try {
+        const {appointmentDate, appointmentTime, firstName,lastName, email} = req.body;
+        if (!appointmentDate || !appointmentTime || !firstName || !lastName || !email) {
+    return res.status(400).json({
+      message: 'Appointment Date, Name and email are required',
+    });
+  }
+  const existedSchedule = await Appointment.findOne({email: email,appointmentDate });
+//   console.log(existedSchedule)
+//   if(existedSchedule.email === email && existedSchedule.appointmentDate === appointmentDate && existedSchedule.appointmentTime === appointmentTime){
+if(existedSchedule){   
+return res.json("Appointment already exists")
+    
+  }else{
+    const payload = { appointmentDate, appointmentTime, firstName, lastName, email };
+    const appointment = new Appointment(payload);
+    const appoint = await appointment.save()
+    //console.log("???????????????????? :",appoint)
+    return res.json({success: 1, appointmentData:appoint})
+}
+    } catch (error) {
+        next(error)
+    }
+})
 router.post('/appointments', async (req, res, next) => {
     try {
         const {appointmentDate, appointmentTime, firstName,lastName, email} = req.body;

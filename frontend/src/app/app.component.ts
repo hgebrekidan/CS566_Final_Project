@@ -3,13 +3,18 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-root',
   template: `
+  <header class="header">
+    <h2 style="font-family:verdana;">MAHARISHI INTERNATIONAL UNIVERSITY CAMPUS CLINIC</h2>
+
+    <p style="font-family:itaics;">CAMPUS COMMUNITY COVID 19 TEST CENTER</p>
+  </header>
   <body class="div">
 
 <div style="background-color:grey;color:white;padding:0px; width:95%;">
 
 <img src="https://s3.amazonaws.com/hailemariamt.com/covid_background.jpeg">
 
-<div class="text">
+<div class="text" style="font-family:verdana;">
   Register Free Account **
   Make An Appointment **
   Check Your Health Status **
@@ -33,7 +38,7 @@ import { Component } from '@angular/core';
   <router-outlet></router-outlet>
 </body>
   <footer class="footer" >
-  <p>@Hailemariam Gebrekidan 2022<br/>Maharishi International University
+  <p style="font-family:verdana;">@HAILEMARIAM GEBREKIDAN 2022<br/>MAHARISHI INTERNATIONAL UNIVERSITY
   </footer>
   `,
   styles: [`
@@ -55,11 +60,21 @@ import { Component } from '@angular/core';
   background-color: grey;
   color: black;
   text-align: center;
-  border: 3px solid black;
+  border: 3px solid LightBlue;
+  padding-top: 5px
+}
+.header{
+  position: fixed;
+  width: 100%;
+  background-color: grey;
+  color: black;
+  text-align: center;
+  top: 0;
+  border: 3px solid LightBlue;
   padding-top: 5px
 }
 .text{
-  color: LightGreen
+  color: indigo;
 }
 
 h3,h1{

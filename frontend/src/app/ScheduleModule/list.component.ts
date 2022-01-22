@@ -16,7 +16,8 @@ import { LogService } from '../userService/user.service';
   <!-- <input style="margin: 4px 2px;"  name = "search" type="text" [(ngModel)]="searchText" placeholder="Search Appointment"/> -->
   <input style="margin: 4px 2px;" #search name="search" type="text" placeholder="Search Appointment"/>
   <!-- {{searchText}} -->
-  <button class="btn" (click)="onClick(search.value)" >Search</button><br/>
+  <button class="btn" (click)="onClick(search.value)" >Search</button>
+  <button class="btn" (click)="showHideBtn()"  >Manage Users</button><br/>
   <table>
   <tr>
 
@@ -33,8 +34,8 @@ import { LogService } from '../userService/user.service';
       <td> {{item?.lastName}}</td>
       <td> {{item?.appointmentDate}}</td>
       <td> {{item?.appointmentTime}}</td>
-<button (click)="deleteAppointment(item._id)">Cancel</button>
-<button>Edit</button>
+<button class="dbtn" (click)="deleteAppointment(item._id)">Cancel</button>
+<button class="ebtn">Edit</button>
 </tr>
   </table><br/></div>
   <!-- [routerLink]="['/','addService']" -->
@@ -85,6 +86,16 @@ input{
   color:red;
   font-size:"40px"
 }
+.dbtn{
+  background-color:red;
+  border: none;
+  color: black;
+}
+.ebtn{
+  background-color:teal;
+  border: none;
+  color: black;
+}
 
 .btn{
   background-color:teal;
@@ -110,6 +121,7 @@ export class ServiceList implements OnInit {
   userData: any;
   isExist:boolean=false
   searchText!: string;
+  showUserButton:boolean = false;
   constructor(private Lists: LogService,private router:Router,private fb:FormBuilder,private data:LogService) {
     this.useInfo = localStorage.getItem('userData');
     this.useInfo = JSON.parse(this.useInfo);
@@ -118,6 +130,7 @@ export class ServiceList implements OnInit {
   console.log("2222222222222222222")
   //this.value=this.appointments;
    console.log(this.appointments)
+
   //  console.log(localStorage.getItem('token'))
   })
   }
@@ -125,6 +138,7 @@ export class ServiceList implements OnInit {
     console.log(event);
   }
   ngOnInit(): void {
+    this.showHideBtn();
     this.form = this.fb.group({
       'firstName':[this.useInfo.firstName],
       'lastName': [this.useInfo.lastName],
@@ -133,8 +147,13 @@ export class ServiceList implements OnInit {
       'appointmentTime': ['', Validators.required]
     });
   }
-  // token on the local storage has been cleared after signout
-
+  showHideBtn(){
+    if(this.useInfo.role==='admin'){
+      this.showUserButton = true;
+    }else{
+      this.showUserButton = false;
+    }
+  }
 
   deleteAppointment(appointmentId: any){
     this.Lists.deleteAppointments(appointmentId).subscribe((response:any) =>{
@@ -163,6 +182,7 @@ export class ServiceList implements OnInit {
   }
 
   submit(){
+
     this.data.addAppointments(this.form.value).subscribe((response:any) =>{
       console.log("=================????? ",response)
       //this.showAddFrom=false
@@ -174,6 +194,9 @@ export class ServiceList implements OnInit {
         this.isExist=true
         this.showAddFrom=true
       }
+      this.data.sendSNS(this.form.value).subscribe((response)=>{
+        console.log(response);
+      })
 
      // this.router.navigate(['/','list','service'])
       // this.obj=response.appointmentData

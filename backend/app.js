@@ -16,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 // app.use('/doctor', doctorRoutes)
 app.use('/users', userRoutes);
+app.use('/sns', appointmentRoutes)
 app.use('/schedules', appointmentRoutes);
 
 app.use((err, req, res, next)=>{
